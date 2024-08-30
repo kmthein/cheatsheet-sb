@@ -1,6 +1,7 @@
 package com.cheatsheet.service;
 
 import com.cheatsheet.dto.ResponseDTO;
+import com.cheatsheet.dto.SectionDTO;
 import com.cheatsheet.entity.Section;
 
 import java.util.List;
@@ -11,9 +12,9 @@ public interface SectionService {
 
     Optional<Section> findById(int id);
 
-    ResponseDTO addNewSection(Section section);
+    ResponseDTO addNewSection(SectionDTO sectionDTO);
 
-    ResponseDTO updateSection(int id, Section section);
+    ResponseDTO updateSection(int id, SectionDTO sectionDTO);
 
     ResponseDTO deleteSection(int id);
 }

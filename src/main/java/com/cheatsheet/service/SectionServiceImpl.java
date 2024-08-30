@@ -1,6 +1,7 @@
 package com.cheatsheet.service;
 
 import com.cheatsheet.dto.ResponseDTO;
+import com.cheatsheet.dto.SectionDTO;
 import com.cheatsheet.entity.Section;
 import com.cheatsheet.repository.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,20 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    public ResponseDTO addNewSection(Section section) {
+    public ResponseDTO addNewSection(SectionDTO sectionDTO) {
         ResponseDTO res = new ResponseDTO();
-        Optional<Section> sectionExist = repo.findByName(section.getName());
-        if(sectionExist != null) {
+        Optional<Section> sectionExist = repo.findByName(sectionDTO.getName());
+        if(sectionExist.isPresent()) {
             res.setStatus("409");
             res.setMessage("Section name already existed");
             return res;
         }
+        Section section = new Section();
+        Optional<Section> parentSection = repo.findSectionById(sectionDTO.getParentId());
+        if(parentSection.isPresent()) {
+            section.setParent(parentSection.get());
+        }
+        section.setName(sectionDTO.getName());
         Section tempSection = repo.save(section);
         if(tempSection == null) {
             res.setStatus("403");
@@ -46,21 +53,30 @@ public class SectionServiceImpl implements SectionService {
     }
 
     @Override
-    public ResponseDTO updateSection(int id, Section section) {
+    public ResponseDTO updateSection(int id, SectionDTO sectionDTO) {
         ResponseDTO res = new ResponseDTO();
         Optional<Section> sectionExist = repo.findById(id);
-        if(sectionExist == null || sectionExist.isEmpty()) {
+        if(sectionExist.isEmpty()) {
             res.setStatus("404");
             res.setMessage("Section was not found");
             return res;
         }
-        Optional<Section> nameExist = repo.findByName(section.getName());
+        Optional<Section> nameExist = repo.findByName(sectionDTO.getName());
         if(nameExist.isPresent()) {
-            res.setStatus("409");
-            res.setMessage("Section name already existed");
-            return res;
+            if(!sectionExist.get().getName().equals(nameExist.get().getName())) {
+                res.setStatus("409");
+                res.setMessage("Section name already existed");
+                return res;
+            }
         }
+        Section section = new Section();
         section.setId(id);
+        section.setName(sectionDTO.getName());
+        section.setCreatedAt(sectionExist.get().getCreatedAt());
+        Optional<Section> parentSection = repo.findSectionById(sectionDTO.getParentId());
+        if(parentSection.isPresent()) {
+            section.setParent(parentSection.get());
+        }
         Section tempSection = repo.save(section);
         if(tempSection == null) {
             res.setStatus("403");
@@ -76,7 +92,7 @@ public class SectionServiceImpl implements SectionService {
     public ResponseDTO deleteSection(int id) {
         Optional<Section> tempSection = repo.findById(id);
         ResponseDTO res = new ResponseDTO();
-        if(tempSection.isEmpty() || tempSection == null) {
+        if(tempSection.isEmpty()) {
             res.setStatus("404");
             res.setMessage("Section was not found");
             return res;

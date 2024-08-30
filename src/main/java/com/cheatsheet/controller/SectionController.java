@@ -1,6 +1,7 @@
 package com.cheatsheet.controller;
 
 import com.cheatsheet.dto.ResponseDTO;
+import com.cheatsheet.dto.SectionDTO;
 import com.cheatsheet.entity.Section;
 import com.cheatsheet.service.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/api")
 public class SectionController {
     @Autowired
     private SectionService service;
@@ -26,14 +28,14 @@ public class SectionController {
     }
 
     @PostMapping("/sections")
-    public ResponseDTO addSection(@RequestBody Section section) {
-        ResponseDTO res = service.addNewSection(section);
+    public ResponseDTO addSection(@RequestBody SectionDTO sectionDTO) {
+        ResponseDTO res = service.addNewSection(sectionDTO);
         return res;
     }
 
     @PutMapping("/sections/{id}")
-    public ResponseDTO updateSection(@PathVariable int id, @RequestBody Section section) {
-        ResponseDTO res = service.updateSection(id, section);
+    public ResponseDTO updateSection(@PathVariable int id, @RequestBody SectionDTO sectionDTO) {
+        ResponseDTO res = service.updateSection(id, sectionDTO);
         return res;
     }
 

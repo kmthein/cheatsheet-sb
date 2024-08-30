@@ -1,9 +1,12 @@
 package com.cheatsheet.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -11,4 +14,12 @@ import lombok.Setter;
 public class Section extends Base {
     @Column(name = "name")
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Section parent;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "parent")
+    private List<Section> children;
 }
