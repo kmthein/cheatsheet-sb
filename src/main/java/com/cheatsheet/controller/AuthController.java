@@ -27,11 +27,11 @@ public class AuthController {
             return new ResponseEntity<>(res, HttpStatus.CONFLICT);
         }
         URI uri = new URI("/api/login");
-        return ResponseEntity.created(uri).build();
+        return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
-        return null;
+    public Object login(@RequestBody User user) {
+        return service.login(user);
     }
 }

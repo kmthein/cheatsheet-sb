@@ -6,5 +6,5 @@ import com.cheatsheet.entity.User;
 public interface AuthService {
     ResponseDTO register(User user);
 
-    ResponseDTO login(User user);
+    Object login(User user);
 }

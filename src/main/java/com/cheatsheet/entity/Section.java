@@ -16,6 +16,10 @@ public class Section extends Base {
     private String name;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
     @JoinColumn(name = "parent_id")
     private Section parent;
 

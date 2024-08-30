@@ -18,12 +18,12 @@ public class SectionController {
     private SectionService service;
 
     @GetMapping("/sections")
-    public List<Section> getAllSections() {
+    public List<SectionDTO> getAllSections() {
         return service.findAll();
     }
 
     @GetMapping("/sections/{id}")
-    public Optional<Section> getSectionById(@PathVariable("id") int id) {
+    public SectionDTO getSectionById(@PathVariable("id") int id) {
         return service.findById(id);
     }
 
