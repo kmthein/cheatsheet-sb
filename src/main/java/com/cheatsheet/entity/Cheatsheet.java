@@ -33,4 +33,7 @@ public class Cheatsheet extends Base {
     @ManyToOne
     @JoinColumn(name = "section_id")
     private Section section;
+
+    @OneToMany(mappedBy = "cheatsheet")
+    private List<Block> blockList;
 }
