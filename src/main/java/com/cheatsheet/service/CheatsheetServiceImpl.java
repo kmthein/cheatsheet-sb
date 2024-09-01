@@ -88,6 +88,43 @@ public class CheatsheetServiceImpl implements CheatsheetService {
         return res;
     }
 
+    @Override
+    public ResponseDTO updateCheatsheet(int id, CheatsheetDTO cheatsheetDTO) {
+        Cheatsheet tempCheatsheet = cheatsheetRepo.findCheatsheetById(id);
+        ResponseDTO res = new ResponseDTO();
+        if(tempCheatsheet == null) {
+            res.setStatus("404");
+            res.setMessage("Cheatsheet is not found");
+            return res;
+        } else {
+            tempCheatsheet.setName(cheatsheetDTO.getName());
+            tempCheatsheet.setColor(cheatsheetDTO.getColor());
+            tempCheatsheet.setDescription(cheatsheetDTO.getDescription());
+            tempCheatsheet.setLanguage(cheatsheetDTO.getLanguage());
+            tempCheatsheet.setStyle(cheatsheetDTO.getStyle());
+            tempCheatsheet.setType(cheatsheetDTO.getType());
+            tempCheatsheet.setSection(sectionRepo.findSectionById(cheatsheetDTO.getSectionId()).get());
+            cheatsheetRepo.save(tempCheatsheet);
+            for(BlockDTO blockDTO: cheatsheetDTO.getBlocks()) {
+                Optional<Block> tempBlock = blockRepo.findById(blockDTO.getId());
+                if(tempBlock.isPresent()) {
+                    Block block = blockRepo.findById(blockDTO.getId()).get();
+                    block.setTitle(blockDTO.getTitle());
+                    try {
+                        block.setContent(new ObjectMapper().writeValueAsString(blockDTO.getContent()));
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    block.setCheatsheet(tempCheatsheet);
+                    blockRepo.save(block);
+                }
+            }
+            res.setStatus("200");
+            res.setMessage("Cheatsheet update successful");
+        }
+        return res;
+    }
+
     private List<List<String>> convertJsonToList(String json) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();

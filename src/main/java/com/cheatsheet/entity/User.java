@@ -1,6 +1,10 @@
 package com.cheatsheet.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import jakarta.persistence.*;
@@ -19,12 +23,17 @@ public class User implements UserDetails {
     @Column(name = "id")
     private int id;
 
+    @Email(message = "Email should be valid")
     @Column(name = "email")
     private String email;
 
+    @NotBlank(message = "Password cannot be blank")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    @Size(min = 20, message = "Password mustn't more than 20 characters")
     @Column(name = "password")
     private String password;
 
+    @NotNull(message = "Name cannot be blank")
     @Column(name = "name")
     private String name;
 

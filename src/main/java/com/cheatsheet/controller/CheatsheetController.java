@@ -20,6 +20,11 @@ public class CheatsheetController {
         return cheatsheetService.addCheatsheet(cheatsheetDTO);
     }
 
+    @PutMapping ("/cheatsheets/{id}")
+    public ResponseDTO updateCheatsheet(@PathVariable("id") Integer id, @RequestBody CheatsheetDTO cheatsheetDTO) {
+        return cheatsheetService.updateCheatsheet(id, cheatsheetDTO);
+    }
+
     @GetMapping("/cheatsheets")
     public List<CheatsheetDTO> getAllCheatsheets() {
         return cheatsheetService.findAllCheatsheets();

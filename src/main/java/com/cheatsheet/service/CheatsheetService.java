@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface CheatsheetService {
     ResponseDTO addCheatsheet(CheatsheetDTO cheatsheetDTO);
+    ResponseDTO updateCheatsheet(int id, CheatsheetDTO cheatsheetDTO);
     List<CheatsheetDTO> findAllCheatsheets();
     List<Cheatsheet> getCheatsheetBySection(int sectionId);
     CheatsheetDTO findCheatsheetById(int id);

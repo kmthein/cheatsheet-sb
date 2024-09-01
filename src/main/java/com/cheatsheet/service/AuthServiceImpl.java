@@ -5,6 +5,7 @@ import com.cheatsheet.dto.ResponseTokenDTO;
 import com.cheatsheet.dto.UserDTO;
 import com.cheatsheet.entity.Role;
 import com.cheatsheet.entity.User;
+import com.cheatsheet.exception.ResourceNotFoundException;
 import com.cheatsheet.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,16 +64,21 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Object login(User user) {
         try {
-            Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
             User existUser = repo.findByEmail(user.getEmail());
+            if(existUser == null) {
+                return new ResponseEntity<>("Email is incorrect, try again", HttpStatus.NOT_FOUND);
+            }
+            Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
             String token = jwtService.generateToken(existUser);
             ResponseTokenDTO tokenDTO = new ResponseTokenDTO();
             tokenDTO.setToken(token);
             UserDTO userDTO = mapper.map(existUser, UserDTO.class);
             tokenDTO.setUserDetails(userDTO);
             return tokenDTO;
-        } catch (UsernameNotFoundException | BadCredentialsException exception) {
-            return new ResponseEntity<>("Incorrect email or password", HttpStatus.UNAUTHORIZED);
+        } catch (BadCredentialsException exception) {
+            return new ResponseEntity<>("Password is incorrect, try again", HttpStatus.UNAUTHORIZED);
+        } catch (UsernameNotFoundException exception) {
+            return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
