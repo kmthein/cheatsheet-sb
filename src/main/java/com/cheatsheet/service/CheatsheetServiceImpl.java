@@ -107,8 +107,12 @@ public class CheatsheetServiceImpl implements CheatsheetService {
             cheatsheetRepo.save(tempCheatsheet);
             for(BlockDTO blockDTO: cheatsheetDTO.getBlocks()) {
                 Optional<Block> tempBlock = blockRepo.findById(blockDTO.getId());
+                Block block = null;
                 if(tempBlock.isPresent()) {
-                    Block block = blockRepo.findById(blockDTO.getId()).get();
+                    block = blockRepo.findById(blockDTO.getId()).get();
+                } else {
+                    block = new Block();
+                }
                     block.setTitle(blockDTO.getTitle());
                     try {
                         block.setContent(new ObjectMapper().writeValueAsString(blockDTO.getContent()));
@@ -118,7 +122,6 @@ public class CheatsheetServiceImpl implements CheatsheetService {
                     block.setCheatsheet(tempCheatsheet);
                     blockRepo.save(block);
                 }
-            }
             res.setStatus("200");
             res.setMessage("Cheatsheet update successful");
         }

@@ -1,13 +1,11 @@
 package com.cheatsheet.entity;
 
-import com.cheatsheet.util.JpaConverterJson;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Data
@@ -17,8 +15,11 @@ public class Block extends Base {
     private String title;
 
     @Lob
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
+
+    @Column(name = "note", columnDefinition = "TEXT")
+    private String note;
 
     @ManyToOne
     @JsonManagedReference
