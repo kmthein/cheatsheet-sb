@@ -19,4 +19,7 @@ public class Image extends Base {
 
     @ManyToMany(mappedBy = "userImage")
     private List<User> users;
+
+    @ManyToMany(mappedBy = "sectionImage")
+    private List<Section> sections;
 }

@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin
 public class SectionController {
     @Autowired
     private SectionService service;
@@ -23,8 +24,13 @@ public class SectionController {
     }
 
     @GetMapping("/sections/{id}")
-    public SectionDTO getSectionById(@PathVariable("id") int id) {
-        return service.findById(id);
+    public Object getSectionById(@PathVariable("id") int id) {
+        SectionDTO sectionDTO = service.findById(id);
+        if(sectionDTO == null) {
+            ResponseDTO res = new ResponseDTO("Section not found");
+            return res;
+        }
+        return sectionDTO;
     }
 
     @PostMapping("/sections")

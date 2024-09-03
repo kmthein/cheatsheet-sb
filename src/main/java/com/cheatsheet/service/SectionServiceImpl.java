@@ -6,6 +6,8 @@ import com.cheatsheet.dto.SectionDTO;
 import com.cheatsheet.dto.UserDTO;
 import com.cheatsheet.entity.Section;
 import com.cheatsheet.entity.User;
+import com.cheatsheet.exception.ResourceNotFoundException;
+import com.cheatsheet.exception.ResourceNotFoundExceptionHandler;
 import com.cheatsheet.repository.SectionRepository;
 import com.cheatsheet.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -58,15 +60,22 @@ public class SectionServiceImpl implements SectionService {
 
     @Override
     public SectionDTO findById(int id) {
-        Section section = sectionRepo.findSectionById(id).get();
-        SectionDTO sectionDTO = mapper.map(section, SectionDTO.class);
-        sectionDTO.setUserId(null);
-        sectionDTO.setParentId(null);
-        UserDTO userDTO = mapper.map(section.getUser(), UserDTO.class);
-        sectionDTO.setUser(userDTO);
-        if(section.getParent() != null) {
-            ParentDTO parentDTO = new ParentDTO(section.getParent().getId(), section.getParent().getName());
-            sectionDTO.setParent(parentDTO);
+        Section section = null;
+        SectionDTO sectionDTO = new SectionDTO();
+        Optional<Section> tempSection = sectionRepo.findSectionById(id);
+        if (tempSection.isEmpty() || tempSection == null) {
+            throw new ResourceNotFoundException("Section not found");
+        } else if (tempSection.isPresent()) {
+            section = tempSection.get();
+            sectionDTO = mapper.map(section, SectionDTO.class);
+            sectionDTO.setUserId(null);
+            sectionDTO.setParentId(null);
+            UserDTO userDTO = mapper.map(section.getUser(), UserDTO.class);
+            sectionDTO.setUser(userDTO);
+            if (section.getParent() != null) {
+                ParentDTO parentDTO = new ParentDTO(section.getParent().getId(), section.getParent().getName());
+                sectionDTO.setParent(parentDTO);
+            }
         }
         return sectionDTO;
     }

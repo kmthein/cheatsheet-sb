@@ -1,6 +1,7 @@
 package com.cheatsheet.controller;
 
 import com.cheatsheet.dto.CheatsheetDTO;
+import com.cheatsheet.dto.CheatsheetReqDTO;
 import com.cheatsheet.dto.ResponseDTO;
 import com.cheatsheet.entity.Cheatsheet;
 import com.cheatsheet.service.CheatsheetService;
@@ -16,12 +17,12 @@ public class CheatsheetController {
     private CheatsheetService cheatsheetService;
 
     @PostMapping("/cheatsheets")
-    public ResponseDTO addCheatsheet(@RequestBody CheatsheetDTO cheatsheetDTO) {
+    public ResponseDTO addCheatsheet(@RequestBody CheatsheetReqDTO cheatsheetDTO) {
         return cheatsheetService.addCheatsheet(cheatsheetDTO);
     }
 
     @PutMapping ("/cheatsheets/{id}")
-    public ResponseDTO updateCheatsheet(@PathVariable("id") Integer id, @RequestBody CheatsheetDTO cheatsheetDTO) {
+    public ResponseDTO updateCheatsheet(@PathVariable("id") Integer id, @RequestBody CheatsheetReqDTO cheatsheetDTO) {
         return cheatsheetService.updateCheatsheet(id, cheatsheetDTO);
     }
 

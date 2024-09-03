@@ -5,14 +5,12 @@ import com.cheatsheet.entity.Block;
 import com.cheatsheet.entity.Cheatsheet;
 import com.cheatsheet.entity.Section;
 import com.cheatsheet.entity.User;
-import com.cheatsheet.exception.ResourceNotFoundException;
 import com.cheatsheet.repository.BlockRepository;
 import com.cheatsheet.repository.CheatsheetRepository;
 import com.cheatsheet.repository.SectionRepository;
 import com.cheatsheet.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,55 +39,65 @@ public class CheatsheetServiceImpl implements CheatsheetService {
     private ModelMapper mapper;
 
     @Override
-    public ResponseDTO addCheatsheet(CheatsheetDTO cheatsheetDTO) {
-        Cheatsheet cheatsheet = mapper.map(cheatsheetDTO, Cheatsheet.class);
+    public ResponseDTO addCheatsheet(CheatsheetReqDTO cheatsheetDTO) {
         ResponseDTO res = new ResponseDTO();
+
         try {
+            // Map the basic fields from DTO to entity
+            Cheatsheet cheatsheet = mapper.map(cheatsheetDTO, Cheatsheet.class);
+
+            // Manually map and set the User
             Optional<User> tempUser = userRepo.findById(cheatsheetDTO.getUserId());
-            User user = null;
-            Section section = null;
-            if(tempUser.isPresent()) {
-                user = tempUser.get();
+            if (tempUser.isPresent()) {
+                cheatsheet.setUser(tempUser.get());
             } else {
                 res.setStatus("401");
                 res.setMessage("User not found");
                 return res;
             }
+
+            // Manually map and set the Section
             Optional<Section> tempSection = sectionRepo.findSectionById(cheatsheetDTO.getSectionId());
-            if(tempSection.isPresent()) {
-                section = tempSection.get();
+            if (tempSection.isPresent()) {
+                cheatsheet.setSection(tempSection.get());
             } else {
                 res.setStatus("401");
                 res.setMessage("Section not found");
                 return res;
             }
-            cheatsheet.setUser(user);
-            cheatsheet.setSection(section);
-        } catch (ResourceNotFoundException e) {
-            System.out.println(e.getMessage());
-            res.setStatus("401");
-            res.setMessage("Something went wrong");
-            return res;
-        }
-        cheatsheetRepo.save(cheatsheet);
-        for(BlockDTO blockDTO: cheatsheetDTO.getBlocks()) {
-            Block block = new Block();
-            block.setTitle(blockDTO.getTitle());
-            try {
-                block.setContent(new ObjectMapper().writeValueAsString(blockDTO.getContent()));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+
+            // Save the Cheatsheet entity
+            cheatsheetRepo.save(cheatsheet);
+
+            // Save associated Blocks
+            for (BlockDTO blockDTO : cheatsheetDTO.getBlocks()) {
+                Block block = new Block();
+                block.setTitle(blockDTO.getTitle());
+
+                try {
+                    block.setContent(new ObjectMapper().writeValueAsString(blockDTO.getContent()));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException("Failed to process JSON content", e);
+                }
+
+                block.setCheatsheet(cheatsheet);
+                blockRepo.save(block);
             }
-            block.setCheatsheet(cheatsheet);
-            blockRepo.save(block);
+
+            res.setStatus("201");
+            res.setMessage("Cheatsheet created successfully");
+
+        } catch (Exception e) {
+            res.setStatus("500");
+            res.setMessage("An error occurred: " + e.getMessage());
         }
-        res.setStatus("201");
-        res.setMessage("Cheatsheet created successfully");
+
         return res;
     }
 
+
     @Override
-    public ResponseDTO updateCheatsheet(int id, CheatsheetDTO cheatsheetDTO) {
+    public ResponseDTO updateCheatsheet(int id, CheatsheetReqDTO cheatsheetDTO) {
         Cheatsheet tempCheatsheet = cheatsheetRepo.findCheatsheetById(id);
         ResponseDTO res = new ResponseDTO();
         if(tempCheatsheet == null) {
@@ -176,10 +184,6 @@ public class CheatsheetServiceImpl implements CheatsheetService {
         UserDTO userDTO = mapper.map(section.getUser(), UserDTO.class);
         userDTO.setRole(section.getUser().getRole());
         cheatsheetDTO.setUser(userDTO);
-
-        // Clear out unwanted IDs
-        cheatsheetDTO.setUserId(null);
-        cheatsheetDTO.setSectionId(null);
 
         return cheatsheetDTO;
     }

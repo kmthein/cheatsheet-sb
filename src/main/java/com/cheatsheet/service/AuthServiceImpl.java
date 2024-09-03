@@ -38,15 +38,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseDTO register(User user) {
         ResponseDTO res = new ResponseDTO();
-        if(user.getPassword().length() < 6) {
-            res.setStatus("403");
-            res.setMessage("Password must have between 6 and 20 characters");
-            return res;
-        } else if(user.getPassword().length() > 20) {
-            res.setStatus("403");
-            res.setMessage("Password must have between 6 and 20 characters");
-            return res;
-        }
         User emailExist = repo.findByEmail(user.getEmail());
         if(emailExist != null) {
             res.setStatus("409");
