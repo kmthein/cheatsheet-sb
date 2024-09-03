@@ -20,7 +20,7 @@ public class Section extends Base {
 
     @ManyToMany
     @JoinTable(
-            name = "section_image",
+            name = "section_has_image",
             joinColumns = @JoinColumn(name = "section_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )

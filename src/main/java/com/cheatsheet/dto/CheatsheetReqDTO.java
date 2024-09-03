@@ -18,4 +18,5 @@ public class CheatsheetReqDTO {
     private List<BlockDTO> blocks;
     private Integer sectionId;
     private Integer userId;
+    private List<String> tagList;
 }

@@ -1,14 +1,9 @@
 package com.cheatsheet.service;
 
 import com.cheatsheet.dto.*;
-import com.cheatsheet.entity.Block;
-import com.cheatsheet.entity.Cheatsheet;
-import com.cheatsheet.entity.Section;
-import com.cheatsheet.entity.User;
-import com.cheatsheet.repository.BlockRepository;
-import com.cheatsheet.repository.CheatsheetRepository;
-import com.cheatsheet.repository.SectionRepository;
-import com.cheatsheet.repository.UserRepository;
+import com.cheatsheet.entity.*;
+import com.cheatsheet.exception.ResourceNotFoundException;
+import com.cheatsheet.repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,17 +31,16 @@ public class CheatsheetServiceImpl implements CheatsheetService {
     private BlockRepository blockRepo;
 
     @Autowired
+    private TagRepository tagRepo;
+
+    @Autowired
     private ModelMapper mapper;
 
     @Override
     public ResponseDTO addCheatsheet(CheatsheetReqDTO cheatsheetDTO) {
         ResponseDTO res = new ResponseDTO();
-
         try {
-            // Map the basic fields from DTO to entity
             Cheatsheet cheatsheet = mapper.map(cheatsheetDTO, Cheatsheet.class);
-
-            // Manually map and set the User
             Optional<User> tempUser = userRepo.findById(cheatsheetDTO.getUserId());
             if (tempUser.isPresent()) {
                 cheatsheet.setUser(tempUser.get());
@@ -55,8 +49,6 @@ public class CheatsheetServiceImpl implements CheatsheetService {
                 res.setMessage("User not found");
                 return res;
             }
-
-            // Manually map and set the Section
             Optional<Section> tempSection = sectionRepo.findSectionById(cheatsheetDTO.getSectionId());
             if (tempSection.isPresent()) {
                 cheatsheet.setSection(tempSection.get());
@@ -65,33 +57,40 @@ public class CheatsheetServiceImpl implements CheatsheetService {
                 res.setMessage("Section not found");
                 return res;
             }
-
-            // Save the Cheatsheet entity
+            if(cheatsheetDTO.getTagList().size() > 0) {
+                List<Tag> tagList = new ArrayList<>();
+                for (String tempTag: cheatsheetDTO.getTagList()) {
+                    Tag tagExist = tagRepo.findByName(tempTag);
+                    Tag tag = new Tag();
+                    if(tagExist == null) {
+                        tag.setName(tempTag);
+                        tagList.add(tag);
+                    } else {
+                        tag.setName(tagExist.getName());
+                        tag.setId(tagExist.getId());
+                        tagList.add(tag);
+                    }
+                }
+                cheatsheet.setTags(tagList);
+            }
             cheatsheetRepo.save(cheatsheet);
-
-            // Save associated Blocks
-            for (BlockDTO blockDTO : cheatsheetDTO.getBlocks()) {
+            for (BlockDTO blockDTO: cheatsheetDTO.getBlocks()) {
                 Block block = new Block();
                 block.setTitle(blockDTO.getTitle());
-
                 try {
                     block.setContent(new ObjectMapper().writeValueAsString(blockDTO.getContent()));
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException("Failed to process JSON content", e);
                 }
-
                 block.setCheatsheet(cheatsheet);
                 blockRepo.save(block);
             }
-
             res.setStatus("201");
             res.setMessage("Cheatsheet created successfully");
-
         } catch (Exception e) {
             res.setStatus("500");
             res.setMessage("An error occurred: " + e.getMessage());
         }
-
         return res;
     }
 
@@ -161,6 +160,9 @@ public class CheatsheetServiceImpl implements CheatsheetService {
     @Override
     public CheatsheetDTO findCheatsheetById(int id) {
         Cheatsheet cheatsheet = cheatsheetRepo.findCheatsheetById(id);
+        if(cheatsheet == null) {
+            throw new ResourceNotFoundException("Cheatsheet not found");
+        }
         return mapCheatsheetToDTO(cheatsheet);
     }
 

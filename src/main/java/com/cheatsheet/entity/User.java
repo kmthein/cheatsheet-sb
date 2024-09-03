@@ -49,7 +49,7 @@ public class User implements UserDetails {
 
     @ManyToMany
     @JoinTable(
-            name = "user_image",
+            name = "user_has_image",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )

@@ -1,5 +1,6 @@
 package com.cheatsheet.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -36,4 +37,13 @@ public class Cheatsheet extends Base {
 
     @OneToMany(mappedBy = "cheatsheet")
     private List<Block> blockList;
+
+    @ManyToMany
+    @JoinTable(
+            name = "cheatsheet_has_tag",
+            joinColumns = @JoinColumn(name = "cheatsheet_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    @JsonManagedReference
+    private List<Tag> tags;
 }
