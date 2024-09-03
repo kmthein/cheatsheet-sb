@@ -40,8 +40,18 @@ public class SectionServiceImpl implements SectionService {
             UserDTO userDTO = mapper.map(section.getUser(), UserDTO.class);
             sectionDTO.setUser(userDTO);
             if(section.getParent() != null) {
-                ParentDTO parentDTO = new ParentDTO(section.getParent().getId(), section.getParent().getName());
-                sectionDTO.setParent(parentDTO);
+                if(section.getParent().getParent() != null) {
+                    SectionDTO parentSection = mapper.map(section.getParent().getParent(), SectionDTO.class);
+                    parentSection.setUserId(null);
+                    parentSection.setParentId(null);
+                    parentSection.setUser(null);
+                    ParentDTO parentDTO = new ParentDTO(section.getParent().getId(), section.getParent().getName(), parentSection);
+                    sectionDTO.setParent(parentDTO);
+                } else {
+                    ParentDTO parentDTO = new ParentDTO(section.getParent().getId(), section.getParent().getName());
+                    sectionDTO.setParent(parentDTO);
+                }
+//                parentSection.setUser(mapper.map(section.getParent().getUser(), UserDTO.class));
             }
             sectionDTOList.add(sectionDTO);
         }
