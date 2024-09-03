@@ -15,6 +15,17 @@ public class Section extends Base {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "type")
+    private String type;
+
+    @ManyToMany
+    @JoinTable(
+            name = "section_image",
+            joinColumns = @JoinColumn(name = "section_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<Image> sectionImage;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

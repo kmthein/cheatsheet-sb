@@ -22,7 +22,17 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) throws URISyntaxException {
-        ResponseDTO res = service.register(user);
+        ResponseDTO res = new ResponseDTO();
+        if(user.getPassword().length() < 6) {
+            res.setStatus("403");
+            res.setMessage("Password must have between 6 and 20 characters");
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        } else if(user.getPassword().length() > 20) {
+            res.setStatus("403");
+            res.setMessage("Password must have between 6 and 20 characters");
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        }
+        res = service.register(user);
         if(!res.getStatus().equals("201")) {
             return new ResponseEntity<>(res, HttpStatus.CONFLICT);
         }
