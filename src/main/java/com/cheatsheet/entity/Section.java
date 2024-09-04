@@ -18,13 +18,8 @@ public class Section extends Base {
     @Column(name = "type")
     private String type;
 
-    @ManyToMany
-    @JoinTable(
-            name = "section_has_image",
-            joinColumns = @JoinColumn(name = "section_id"),
-            inverseJoinColumns = @JoinColumn(name = "image_id")
-    )
-    private List<Image> sectionImage;
+    @Column(name = "icon")
+    private String icon;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

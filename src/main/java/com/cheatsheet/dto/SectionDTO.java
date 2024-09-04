@@ -9,6 +9,7 @@ import lombok.Data;
 public class SectionDTO {
     private int id;
     private String name;
+    private String icon;
     private Integer parentId;
     private Integer userId;
     private UserDTO user;

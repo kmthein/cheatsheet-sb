@@ -90,9 +90,11 @@ public class SectionServiceImpl implements SectionService {
             return res;
         }
         Section section = new Section();
-        Optional<Section> parentSection = sectionRepo.findSectionById(sectionDTO.getParentId());
-        if(parentSection.isPresent()) {
-            section.setParent(parentSection.get());
+        if(sectionDTO.getParentId() != null) {
+            Optional<Section> parentSection = sectionRepo.findSectionById(sectionDTO.getParentId());
+            if(parentSection.isPresent()) {
+                section.setParent(parentSection.get());
+            }
         }
         Optional<User> user = userRepo.findById(sectionDTO.getUserId());
         if(user.isPresent()) {
