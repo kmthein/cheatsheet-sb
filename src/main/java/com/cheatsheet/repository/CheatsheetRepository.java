@@ -27,4 +27,7 @@ public interface CheatsheetRepository extends JpaRepository<Cheatsheet, Integer>
     @Transactional
     @Query("UPDATE Cheatsheet c SET c.isDeleted = true WHERE c.id = :id")
     int deleteCheatsheetById(@Param("id") Integer id);
+
+    @Query("SELECT cs FROM Cheatsheet cs WHERE cs.isDeleted = false AND cs.user.id = :id")
+    List<Cheatsheet> findAllByUserId(@Param("id") Integer id);
 }

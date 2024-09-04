@@ -16,6 +16,7 @@ public class CheatsheetDTO {
     private String style;
     private String type;
     private String language;
+    private String layout;
     private List<BlockDTO> blocks;
     private SectionDTO section;
     private UserDTO user;

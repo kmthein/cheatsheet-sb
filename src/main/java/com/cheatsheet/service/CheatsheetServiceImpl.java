@@ -245,4 +245,17 @@ public class CheatsheetServiceImpl implements CheatsheetService {
         }
         return res;
     }
+
+    @Override
+    public List<CheatsheetDTO> findCheatsheetsByUserId(int id) {
+        List<Cheatsheet> cheatsheets = cheatsheetRepo.findAllByUserId(id);
+        List<CheatsheetDTO> cheatsheetDTOList = new ArrayList<>();
+
+        for (Cheatsheet cheatsheet : cheatsheets) {
+            CheatsheetDTO cheatsheetDTO = mapCheatsheetToDTO(cheatsheet);
+            cheatsheetDTOList.add(cheatsheetDTO);
+        }
+
+        return cheatsheetDTOList;
+    }
 }

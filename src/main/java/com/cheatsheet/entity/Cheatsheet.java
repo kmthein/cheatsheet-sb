@@ -27,6 +27,9 @@ public class Cheatsheet extends Base {
     @Column(name = "language")
     private String language;
 
+    @Column(name = "layout")
+    private String layout;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
