@@ -54,10 +54,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Object login(User user) {
+        ResponseDTO res = new ResponseDTO();
         try {
             User existUser = repo.findByEmail(user.getEmail());
             if(existUser == null) {
-                return new ResponseEntity<>("Email is incorrect, try again", HttpStatus.NOT_FOUND);
+                res.setStatus("404");
+                res.setMessage("Email is incorrect, try again");
+                return res;
             }
             Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
             String token = jwtService.generateToken(existUser);
@@ -67,9 +70,13 @@ public class AuthServiceImpl implements AuthService {
             tokenDTO.setUserDetails(userDTO);
             return tokenDTO;
         } catch (BadCredentialsException exception) {
-            return new ResponseEntity<>("Password is incorrect, try again", HttpStatus.UNAUTHORIZED);
+            res.setStatus("401");
+            res.setMessage("Password is incorrect, try again");
+            return res;
         } catch (UsernameNotFoundException exception) {
-            return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
+            res.setStatus("404");
+            res.setMessage("An error occurred during login");
+            return res;
         }
     }
 }
