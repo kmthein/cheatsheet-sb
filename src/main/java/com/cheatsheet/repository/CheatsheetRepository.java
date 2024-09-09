@@ -30,4 +30,7 @@ public interface CheatsheetRepository extends JpaRepository<Cheatsheet, Integer>
 
     @Query("SELECT cs FROM Cheatsheet cs WHERE cs.isDeleted = false AND cs.user.id = :id")
     List<Cheatsheet> findAllByUserId(@Param("id") Integer id);
+
+    @Query("SELECT cs FROM Cheatsheet cs WHERE cs.name = :name AND cs.isDeleted = false")
+    Cheatsheet findByName(@Param("name") String name);
 }

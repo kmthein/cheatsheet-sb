@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,34 @@ public class CheatsheetServiceImpl implements CheatsheetService {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Override
+    public ResponseDTO addNewCheatsheet(CheatsheetReqDTO cheatsheetDTO) {
+        Cheatsheet cheatsheet = new Cheatsheet();
+        ResponseDTO res = new ResponseDTO();
+        Cheatsheet nameExist = cheatsheetRepo.findByName(cheatsheetDTO.getName());
+        if(nameExist != null) {
+            throw new ResourceNotFoundException("Name was already existed, choose another");
+        } else {
+            cheatsheet.setName(cheatsheetDTO.getName());
+            Optional<User> tempUser = userRepo.findById(cheatsheetDTO.getUserId());
+            if(tempUser.isEmpty()) {
+                throw new ResourceNotFoundException("User not found");
+            } else {
+                cheatsheet.setUser(tempUser.get());
+            }
+            Cheatsheet tempCs = cheatsheetRepo.save(cheatsheet);
+            if(tempCs != null) {
+                res.setStatus("201");
+                res.setMessage("Cheatsheet created successfully");
+                res.setId(tempCs.getId());
+            } else {
+                res.setStatus("500");
+                res.setMessage("An error occurred");
+            }
+        }
+        return res;
+    }
 
     @Override
     public ResponseDTO addCheatsheet(CheatsheetReqDTO cheatsheetDTO) {
@@ -64,10 +93,12 @@ public class CheatsheetServiceImpl implements CheatsheetService {
                     Tag tag = new Tag();
                     if(tagExist == null) {
                         tag.setName(tempTag);
+                        tagRepo.save(tag);
                         tagList.add(tag);
                     } else {
                         tag.setName(tagExist.getName());
                         tag.setId(tagExist.getId());
+                        tagRepo.save(tag);
                         tagList.add(tag);
                     }
                 }
@@ -170,21 +201,25 @@ public class CheatsheetServiceImpl implements CheatsheetService {
         CheatsheetDTO cheatsheetDTO = mapper.map(cheatsheet, CheatsheetDTO.class);
 
         // Map Blocks to BlockDTOs
-        List<BlockDTO> blockDTOList = new ArrayList<>();
+        if(cheatsheet.getBlockList().size() > 0) {
+            List<BlockDTO> blockDTOList = new ArrayList<>();
         for (Block block : cheatsheet.getBlockList()) {
             BlockDTO blockDTO = mapBlockToDTO(block);
             blockDTOList.add(blockDTO);
         }
         cheatsheetDTO.setBlocks(blockDTOList);
+        }
 
         // Map Section and its hierarchy
-        Section section = cheatsheet.getSection();
-        SectionDTO sectionDTO = mapSectionToDTO(section);
-        cheatsheetDTO.setSection(sectionDTO);
+        if(cheatsheet.getSection() != null) {
+            Section section = cheatsheet.getSection();
+            SectionDTO sectionDTO = mapSectionToDTO(section);
+            cheatsheetDTO.setSection(sectionDTO);
+        }
 
         // Map User
-        UserDTO userDTO = mapper.map(section.getUser(), UserDTO.class);
-        userDTO.setRole(section.getUser().getRole());
+        UserDTO userDTO = mapper.map(cheatsheet.getUser(), UserDTO.class);
+        userDTO.setRole(cheatsheet.getUser().getRole());
         cheatsheetDTO.setUser(userDTO);
 
         return cheatsheetDTO;

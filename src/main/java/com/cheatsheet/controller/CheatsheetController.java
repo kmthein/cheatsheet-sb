@@ -12,9 +12,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin
 public class CheatsheetController {
     @Autowired
     private CheatsheetService cheatsheetService;
+
+    @PostMapping("/cheatsheets/name")
+    public ResponseDTO addNewCheatsheet(@RequestBody CheatsheetReqDTO cheatsheetReqDTO) {
+        return cheatsheetService.addNewCheatsheet(cheatsheetReqDTO);
+    }
 
     @PostMapping("/cheatsheets")
     public ResponseDTO addCheatsheet(@RequestBody CheatsheetReqDTO cheatsheetDTO) {
