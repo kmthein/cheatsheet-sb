@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @CrossOrigin
 public class UserController {
     @Autowired
     private CheatsheetService cheatsheetService;
 
-    @GetMapping("/users/{id}")
+    @GetMapping("{id}")
     public UserDTO getUserById(@PathVariable("id") int id) {
         return null;
     }
 
-    @GetMapping("/users/{id}/cheatsheets")
+    @GetMapping("{id}/cheatsheets")
     public List<CheatsheetDTO> getCheatsheetsByUserId(@PathVariable("id") int id) {
         return cheatsheetService.findCheatsheetsByUserId(id);
     }

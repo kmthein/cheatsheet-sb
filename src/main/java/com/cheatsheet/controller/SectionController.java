@@ -12,18 +12,18 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/sections")
 @CrossOrigin
 public class SectionController {
     @Autowired
     private SectionService service;
 
-    @GetMapping("/sections")
+    @GetMapping("")
     public List<SectionDTO> getAllSections() {
         return service.findAll();
     }
 
-    @GetMapping("/sections/{id}")
+    @GetMapping("{id}")
     public Object getSectionById(@PathVariable("id") int id) {
         SectionDTO sectionDTO = service.findById(id);
         if(sectionDTO == null) {
@@ -33,19 +33,19 @@ public class SectionController {
         return sectionDTO;
     }
 
-    @PostMapping("/sections")
+    @PostMapping("")
     public ResponseDTO addSection(@RequestBody SectionDTO sectionDTO) {
         ResponseDTO res = service.addNewSection(sectionDTO);
         return res;
     }
 
-    @PutMapping("/sections/{id}")
+    @PutMapping("{id}")
     public ResponseDTO updateSection(@PathVariable int id, @RequestBody SectionDTO sectionDTO) {
         ResponseDTO res = service.updateSection(id, sectionDTO);
         return res;
     }
 
-    @DeleteMapping("/sections/{id}")
+    @DeleteMapping("{id}")
     public ResponseDTO deleteSection(@PathVariable int id) {
         ResponseDTO res = service.deleteSection(id);
         return res;

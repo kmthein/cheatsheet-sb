@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api")
+@RequestMapping("/api/rates")
 public class RateController {
     @Autowired
     private RateService rateService;
 
-    @PostMapping("/rates")
+    @PostMapping("")
     private ResponseDTO addNewRate(@RequestBody Rate rate) {
         ResponseDTO res = new ResponseDTO();
         if(rate.getCount() == null) {
