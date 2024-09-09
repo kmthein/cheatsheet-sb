@@ -142,15 +142,15 @@ public class CheatsheetServiceImpl implements CheatsheetService {
             tempCheatsheet.setStyle(cheatsheetDTO.getStyle());
             tempCheatsheet.setType(cheatsheetDTO.getType());
             tempCheatsheet.setSection(sectionRepo.findSectionById(cheatsheetDTO.getSectionId()).get());
-            cheatsheetRepo.save(tempCheatsheet);
-            for(BlockDTO blockDTO: cheatsheetDTO.getBlocks()) {
-                Optional<Block> tempBlock = blockRepo.findById(blockDTO.getId());
-                Block block = null;
-                if(tempBlock.isPresent()) {
-                    block = blockRepo.findById(blockDTO.getId()).get();
-                } else {
-                    block = new Block();
-                }
+            if(cheatsheetDTO.getBlocks() != null) {
+                for (BlockDTO blockDTO : cheatsheetDTO.getBlocks()) {
+                    Optional<Block> tempBlock = blockRepo.findById(blockDTO.getId());
+                    Block block = null;
+                    if (tempBlock.isPresent()) {
+                        block = blockRepo.findById(blockDTO.getId()).get();
+                    } else {
+                        block = new Block();
+                    }
                     block.setTitle(blockDTO.getTitle());
                     try {
                         block.setContent(new ObjectMapper().writeValueAsString(blockDTO.getContent()));
@@ -160,8 +160,28 @@ public class CheatsheetServiceImpl implements CheatsheetService {
                     block.setCheatsheet(tempCheatsheet);
                     blockRepo.save(block);
                 }
+            }
             res.setStatus("200");
             res.setMessage("Cheatsheet update successful");
+        }
+        if(cheatsheetDTO.getTagList().size() > 0) {
+            List<Tag> tagList = new ArrayList<>();
+            for (String tempTag: cheatsheetDTO.getTagList()) {
+                Tag tagExist = tagRepo.findByName(tempTag);
+                Tag tag = new Tag();
+                if(tagExist == null) {
+                    tag.setName(tempTag);
+                    tagRepo.save(tag);
+                    tagList.add(tag);
+                } else {
+                    tag.setName(tagExist.getName());
+                    tag.setId(tagExist.getId());
+                    tagRepo.save(tag);
+                    tagList.add(tag);
+                }
+            }
+            tempCheatsheet.setTags(tagList);
+            cheatsheetRepo.save(tempCheatsheet);
         }
         return res;
     }
