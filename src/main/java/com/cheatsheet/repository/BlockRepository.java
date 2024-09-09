@@ -10,6 +10,9 @@ import java.util.List;
 
 @Repository
 public interface BlockRepository extends JpaRepository<Block, Integer> {
+    @Query("SELECT b FROM Block b WHERE b.isDeleted = false AND b.id = :id")
+    Block getBlockById(@Param("id") Integer id);
+
     @Query("SELECT b FROM Block b WHERE b.cheatsheet.id = :cheatsheetId")
     List<Block> getBlocksByCheatsheet(@Param("cheatsheetId") Integer cheatsheetId);
 }

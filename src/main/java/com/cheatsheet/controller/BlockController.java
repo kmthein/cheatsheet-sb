@@ -1,5 +1,6 @@
 package com.cheatsheet.controller;
 
+import com.cheatsheet.dto.BlockDTO;
 import com.cheatsheet.dto.CheatsheetReqDTO;
 import com.cheatsheet.dto.ResponseDTO;
 import com.cheatsheet.service.BlockService;
@@ -16,5 +17,10 @@ public class BlockController {
     @PostMapping("")
     public ResponseDTO addNewBlock(@RequestBody CheatsheetReqDTO cheatsheetReqDTO) {
         return blockService.addNewBlock(cheatsheetReqDTO);
+    }
+
+    @GetMapping("{id}")
+    public BlockDTO getBlockById(@PathVariable int id) {
+        return blockService.getBlockById(id);
     }
 }

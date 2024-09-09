@@ -141,6 +141,7 @@ public class CheatsheetServiceImpl implements CheatsheetService {
             tempCheatsheet.setLanguage(cheatsheetDTO.getLanguage());
             tempCheatsheet.setStyle(cheatsheetDTO.getStyle());
             tempCheatsheet.setType(cheatsheetDTO.getType());
+            tempCheatsheet.setLayout(cheatsheetDTO.getLayout());
             tempCheatsheet.setSection(sectionRepo.findSectionById(cheatsheetDTO.getSectionId()).get());
             if(cheatsheetDTO.getBlocks() != null) {
                 for (BlockDTO blockDTO : cheatsheetDTO.getBlocks()) {
@@ -163,30 +164,32 @@ public class CheatsheetServiceImpl implements CheatsheetService {
             }
             res.setStatus("200");
             res.setMessage("Cheatsheet update successful");
-        }
-        if(cheatsheetDTO.getTagList().size() > 0) {
-            List<Tag> tagList = new ArrayList<>();
-            for (String tempTag: cheatsheetDTO.getTagList()) {
-                Tag tagExist = tagRepo.findByName(tempTag);
-                Tag tag = new Tag();
-                if(tagExist == null) {
-                    tag.setName(tempTag);
-                    tagRepo.save(tag);
-                    tagList.add(tag);
-                } else {
-                    tag.setName(tagExist.getName());
-                    tag.setId(tagExist.getId());
-                    tagRepo.save(tag);
-                    tagList.add(tag);
+            if(cheatsheetDTO.getTagList() != null) {
+                if(cheatsheetDTO.getTagList().size() > 0) {
+                    List<Tag> tagList = new ArrayList<>();
+                    for (String tempTag: cheatsheetDTO.getTagList()) {
+                        Tag tagExist = tagRepo.findByName(tempTag);
+                        Tag tag = new Tag();
+                        if(tagExist == null) {
+                            tag.setName(tempTag);
+                            tagRepo.save(tag);
+                            tagList.add(tag);
+                        } else {
+                            tag.setName(tagExist.getName());
+                            tag.setId(tagExist.getId());
+                            tagRepo.save(tag);
+                            tagList.add(tag);
+                        }
+                    }
+                    tempCheatsheet.setTags(tagList);
                 }
             }
-            tempCheatsheet.setTags(tagList);
-            cheatsheetRepo.save(tempCheatsheet);
         }
+        cheatsheetRepo.save(tempCheatsheet);
         return res;
     }
 
-    private List<List<String>> convertJsonToList(String json) {
+    public static List<List<String>> convertJsonToList(String json) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(json, new TypeReference<List<List<String>>>() {});
@@ -235,6 +238,19 @@ public class CheatsheetServiceImpl implements CheatsheetService {
             Section section = cheatsheet.getSection();
             SectionDTO sectionDTO = mapSectionToDTO(section);
             cheatsheetDTO.setSection(sectionDTO);
+        }
+
+        if(cheatsheet.getTags() != null) {
+            if(cheatsheet.getTags().size() > 0) {
+                List<TagDTO> tagDTOList = new ArrayList<>();
+                for(Tag tag: cheatsheet.getTags()) {
+                    TagDTO tagDTO = new TagDTO();
+                    tagDTO.setId(tag.getId());
+                    tagDTO.setName(tag.getName());
+                    tagDTOList.add(tagDTO);
+                }
+                cheatsheetDTO.setTagList(tagDTOList);
+            }
         }
 
         // Map User

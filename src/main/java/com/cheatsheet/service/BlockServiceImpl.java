@@ -12,7 +12,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import static com.cheatsheet.service.CheatsheetServiceImpl.convertJsonToList;
 
 @Service
 public class BlockServiceImpl implements BlockService {
@@ -21,6 +25,16 @@ public class BlockServiceImpl implements BlockService {
 
     @Autowired
     private BlockRepository blockRepo;
+
+    @Override
+    public BlockDTO getBlockById(int id) {
+        Block tempBlock = blockRepo.getBlockById(id);
+        BlockDTO blockDTO = new BlockDTO();
+        blockDTO.setId(tempBlock.getId());
+        blockDTO.setTitle(tempBlock.getTitle());
+        blockDTO.setContent(convertJsonToList(tempBlock.getContent()));
+        return blockDTO;
+    }
 
     @Override
     public ResponseDTO addNewBlock(CheatsheetReqDTO cheatsheetDTO) {
