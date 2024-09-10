@@ -10,6 +10,7 @@ import com.cheatsheet.repository.CheatsheetRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class BlockServiceImpl implements BlockService {
     public ResponseDTO addNewBlock(CheatsheetReqDTO cheatsheetDTO) {
         Cheatsheet tempCheatsheet = cheatsheetRepo.findCheatsheetById(cheatsheetDTO.getId());
         ResponseDTO res = new ResponseDTO();
+        Boolean isEdit = false;
         if(tempCheatsheet == null) {
             res.setStatus("404");
             res.setMessage("Cheatsheet is not found");
@@ -51,6 +53,7 @@ public class BlockServiceImpl implements BlockService {
                 Block block = null;
                 if(tempBlock.isPresent()) {
                     block = blockRepo.findById(blockDTO.getId()).get();
+                    isEdit = true;
                 } else {
                     block = new Block();
                 }
@@ -63,8 +66,12 @@ public class BlockServiceImpl implements BlockService {
                 block.setCheatsheet(tempCheatsheet);
                 blockRepo.save(block);
             }
+            if(isEdit) {
+                res.setMessage("Block updated successful");
+            } else {
+                res.setMessage("Block added successful");
+            }
             res.setStatus("200");
-            res.setMessage("Block added successful");
         }
         return res;
     }
