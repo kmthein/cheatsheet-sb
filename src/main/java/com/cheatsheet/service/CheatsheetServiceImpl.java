@@ -228,6 +228,7 @@ public class CheatsheetServiceImpl implements CheatsheetService {
             List<BlockDTO> blockDTOList = new ArrayList<>();
         for (Block block : cheatsheet.getBlockList()) {
             BlockDTO blockDTO = mapBlockToDTO(block);
+            blockDTO.setNote(block.getNote());
             blockDTOList.add(blockDTO);
         }
         cheatsheetDTO.setBlocks(blockDTOList);

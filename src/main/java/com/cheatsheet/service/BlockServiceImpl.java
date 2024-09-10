@@ -33,6 +33,7 @@ public class BlockServiceImpl implements BlockService {
         BlockDTO blockDTO = new BlockDTO();
         blockDTO.setId(tempBlock.getId());
         blockDTO.setTitle(tempBlock.getTitle());
+        blockDTO.setNote(tempBlock.getNote());
         blockDTO.setContent(convertJsonToList(tempBlock.getContent()));
         return blockDTO;
     }
@@ -58,6 +59,7 @@ public class BlockServiceImpl implements BlockService {
                     block = new Block();
                 }
                 block.setTitle(blockDTO.getTitle());
+                block.setNote(blockDTO.getNote());
                 try {
                     block.setContent(new ObjectMapper().writeValueAsString(blockDTO.getContent()));
                 } catch (JsonProcessingException e) {

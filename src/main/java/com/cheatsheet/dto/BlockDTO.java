@@ -10,5 +10,6 @@ import java.util.List;
 public class BlockDTO {
     private int id;
     private String title;
+    private String note;
     private List<List<String>> content;
 }
