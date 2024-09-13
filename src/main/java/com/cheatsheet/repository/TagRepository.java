@@ -13,6 +13,9 @@ public interface TagRepository extends JpaRepository<Tag, Integer> {
     @Query("SELECT t FROM Tag t WHERE t.isDeleted = false")
     List<Tag> findAllTags();
 
+    @Query("SELECT t FROM Tag t INNER JOIN t.cheatsheets c WHERE t.isDeleted = false AND c.id = :cheatsheetId")
+    List<Tag> findByCheatsheetId(@Param("cheatsheetID") Integer cheatsheetId);
+
     @Query("SELECT t FROM Tag t WHERE t.isDeleted = false AND t.id = :id")
     Tag findTagById(@Param("id") Integer id);
 
