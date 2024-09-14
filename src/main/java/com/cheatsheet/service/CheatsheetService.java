@@ -12,7 +12,7 @@ public interface CheatsheetService {
     ResponseDTO addCheatsheet(CheatsheetReqDTO cheatsheetDTO);
     ResponseDTO updateCheatsheet(int id, CheatsheetReqDTO cheatsheetDTO);
     List<CheatsheetDTO> findAllCheatsheets();
-    List<Cheatsheet> getCheatsheetBySection(int sectionId);
+    List<CheatsheetDTO> getCheatsheetBySection(String name);
     CheatsheetDTO findCheatsheetById(int id);
     ResponseDTO deleteCheatsheetById(int id);
     List<CheatsheetDTO> findCheatsheetsByUserId(int id);

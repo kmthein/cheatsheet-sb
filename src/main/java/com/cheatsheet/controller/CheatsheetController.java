@@ -47,8 +47,8 @@ public class CheatsheetController {
         return cheatsheetService.deleteCheatsheetById(id);
     }
 
-    @GetMapping("section/{id}")
-    public List<Cheatsheet> getCheatsheetBySection(@PathVariable("id") int id) {
-        return cheatsheetService.getCheatsheetBySection(id);
+    @GetMapping("section/{name}")
+    public List<CheatsheetDTO> getCheatsheetBySection(@PathVariable("name") String name) {
+        return cheatsheetService.getCheatsheetBySection(name);
     }
 }

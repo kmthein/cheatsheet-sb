@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface CheatsheetRepository extends JpaRepository<Cheatsheet, Integer> {
     @Procedure(procedureName = "GetCheatsheetsBySection")
-    List<Cheatsheet> findCheatsheetBySection(@Param("section_id") Integer sectionId);
+    List<Cheatsheet> findCheatsheetBySection(@Param("section_name") String name);
 
     @Query("SELECT c FROM Cheatsheet c WHERE c.isDeleted = false")
     List<Cheatsheet> findAllCheatsheets();

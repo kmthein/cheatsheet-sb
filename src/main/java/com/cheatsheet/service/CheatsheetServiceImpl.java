@@ -300,8 +300,16 @@ public class CheatsheetServiceImpl implements CheatsheetService {
 
     @Transactional
     @Override
-    public List<Cheatsheet> getCheatsheetBySection(int sectionId) {
-        return cheatsheetRepo.findCheatsheetBySection(sectionId);
+    public List<CheatsheetDTO> getCheatsheetBySection(String name) {
+        List<Cheatsheet> cheatsheets = cheatsheetRepo.findCheatsheetBySection(name);
+        List<CheatsheetDTO> cheatsheetDTOList = new ArrayList<>();
+
+        for (Cheatsheet cheatsheet : cheatsheets) {
+            CheatsheetDTO cheatsheetDTO = mapCheatsheetToDTO(cheatsheet);
+            cheatsheetDTOList.add(cheatsheetDTO);
+        }
+
+        return cheatsheetDTOList;
     }
 
     @Override
