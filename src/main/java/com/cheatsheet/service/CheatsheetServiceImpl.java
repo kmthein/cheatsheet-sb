@@ -220,7 +220,8 @@ public class CheatsheetServiceImpl implements CheatsheetService {
         return mapCheatsheetToDTO(cheatsheet);
     }
 
-    private CheatsheetDTO mapCheatsheetToDTO(Cheatsheet cheatsheet) {
+    @Override
+    public CheatsheetDTO mapCheatsheetToDTO(Cheatsheet cheatsheet) {
         CheatsheetDTO cheatsheetDTO = mapper.map(cheatsheet, CheatsheetDTO.class);
 
         // Map Blocks to BlockDTOs

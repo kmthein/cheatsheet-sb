@@ -16,4 +16,5 @@ public interface CheatsheetService {
     CheatsheetDTO findCheatsheetById(int id);
     ResponseDTO deleteCheatsheetById(int id);
     List<CheatsheetDTO> findCheatsheetsByUserId(int id);
+    CheatsheetDTO mapCheatsheetToDTO(Cheatsheet cheatsheet);
 }
