@@ -164,6 +164,7 @@ public class CheatsheetServiceImpl implements CheatsheetService {
             }
             res.setStatus("200");
             res.setMessage("Cheatsheet update successful");
+            System.out.println(cheatsheetDTO.getTagList().size());
             if(cheatsheetDTO.getTagList() != null) {
                 if(cheatsheetDTO.getTagList().size() > 0) {
                     List<Tag> tagList = new ArrayList<>();
@@ -182,6 +183,24 @@ public class CheatsheetServiceImpl implements CheatsheetService {
                         }
                     }
                     tempCheatsheet.setTags(tagList);
+                } else {
+                    List<Tag> tagList = tagRepo.findByCheatsheetId(id);
+                    for (Tag tag: tagList) {
+                        System.out.println(tag.getName());
+                        Tag tempTag = tagRepo.findTagById(tag.getId());
+                        if(tempTag != null) {
+                            tempCheatsheet.setTags(new ArrayList<>());
+                        }
+                    }
+                }
+            } else {
+                List<Tag> tagList = tagRepo.findByCheatsheetId(cheatsheetDTO.getId());
+                for (Tag tag: tagList) {
+                    System.out.println(tag.getName());
+                    Tag tempTag = tagRepo.findTagById(tag.getId());
+                    if(tempTag != null) {
+                        tagRepo.delete(tempTag);
+                    }
                 }
             }
         }
@@ -268,6 +287,7 @@ public class CheatsheetServiceImpl implements CheatsheetService {
         blockDTO.setId(block.getId());
         blockDTO.setTitle(block.getTitle());
         blockDTO.setContent(convertJsonToList(block.getContent()));
+        blockDTO.setImgUrl(block.getImgUrl());
         return blockDTO;
     }
 

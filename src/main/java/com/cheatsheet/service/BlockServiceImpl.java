@@ -12,15 +12,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.cheatsheet.service.CheatsheetServiceImpl.convertJsonToList;
 
 @Service
 public class BlockServiceImpl implements BlockService {
+    private static final String UPLOAD_DIR = "src/main/resources/static/uploads";
+
     @Autowired
     private CheatsheetRepository cheatsheetRepo;
 
@@ -35,6 +44,7 @@ public class BlockServiceImpl implements BlockService {
         blockDTO.setTitle(tempBlock.getTitle());
         blockDTO.setNote(tempBlock.getNote());
         blockDTO.setContent(convertJsonToList(tempBlock.getContent()));
+        blockDTO.setImgUrl(tempBlock.getImgUrl());
         return blockDTO;
     }
 
@@ -74,6 +84,46 @@ public class BlockServiceImpl implements BlockService {
                 res.setMessage("Block added successful");
             }
             res.setStatus("200");
+        }
+        return res;
+    }
+
+    @Override
+    public ResponseDTO addImageBlock(String title, String note, String id, MultipartFile image) {
+        Cheatsheet tempCheatsheet = cheatsheetRepo.findCheatsheetById(Integer.parseInt(id));
+        ResponseDTO res = new ResponseDTO();
+        try {
+            Block tempBlock = new Block();
+            tempBlock.setTitle(title);
+            tempBlock.setNote(note);
+            tempBlock.setContent("[]");
+            if(tempCheatsheet != null) {
+                tempBlock.setCheatsheet(tempCheatsheet);
+            }
+            if(image != null && !image.isEmpty()) {
+                // Get the original file name
+                String fileName = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
+
+                // Ensure the directory exists
+                File uploadDir = new File(UPLOAD_DIR);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs(); // Create the directory if it doesn't exist
+                }
+
+                // Construct the path to save the file
+                Path path = Paths.get(UPLOAD_DIR + "/" + fileName);
+
+                // Save the file locally
+                Files.write(path, image.getBytes());
+
+                System.out.println("File saved at: " + path.toString());
+                tempBlock.setImgUrl("uploads\\" + fileName);
+                blockRepo.save(tempBlock);
+                res.setMessage("Block with image added successful");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            res.setMessage("Block add failed");
         }
         return res;
     }

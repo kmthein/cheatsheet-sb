@@ -11,5 +11,6 @@ public class BlockDTO {
     private int id;
     private String title;
     private String note;
+    private String imgUrl;
     private List<List<String>> content;
 }

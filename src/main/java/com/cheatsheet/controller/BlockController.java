@@ -6,6 +6,7 @@ import com.cheatsheet.dto.ResponseDTO;
 import com.cheatsheet.service.BlockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/blocks")
@@ -17,6 +18,14 @@ public class BlockController {
     @PostMapping("")
     public ResponseDTO addNewBlock(@RequestBody CheatsheetReqDTO cheatsheetReqDTO) {
         return blockService.addNewBlock(cheatsheetReqDTO);
+    }
+
+    @PostMapping("image")
+    public ResponseDTO addImageBlock(@RequestPart("title") String title,
+                                     @RequestPart(value = "note", required = false) String note,
+                                     @RequestPart("id") String id,
+                                     @RequestPart(value = "image", required = false) MultipartFile image) {
+        return blockService.addImageBlock(title, note, id, image);
     }
 
     @GetMapping("{id}")

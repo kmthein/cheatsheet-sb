@@ -21,6 +21,9 @@ public class Block extends Base {
     @Column(name = "note", columnDefinition = "TEXT")
     private String note;
 
+    @Column(name = "img_url", columnDefinition = "TEXT")
+    private String imgUrl;
+
     @ManyToOne
     @JsonManagedReference
     @JoinColumn(name = "cheatsheet_id")
