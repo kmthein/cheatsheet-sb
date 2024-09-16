@@ -47,7 +47,10 @@ public class User implements UserDetails {
     @Column(name = "role")
     private Role role;
 
-    @ManyToMany
+    @ManyToMany(cascade = {
+            CascadeType.DETACH,  CascadeType.MERGE,
+            CascadeType.PERSIST,CascadeType.REFRESH
+    })
     @JoinTable(
             name = "user_has_image",
             joinColumns = @JoinColumn(name = "user_id"),

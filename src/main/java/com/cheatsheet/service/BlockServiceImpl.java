@@ -28,7 +28,7 @@ import static com.cheatsheet.service.CheatsheetServiceImpl.convertJsonToList;
 
 @Service
 public class BlockServiceImpl implements BlockService {
-    private static final String UPLOAD_DIR = "src/main/resources/static/uploads";
+    private static final String UPLOAD_DIR = "uploads";
 
     @Autowired
     private CheatsheetRepository cheatsheetRepo;

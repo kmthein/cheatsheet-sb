@@ -13,7 +13,7 @@ public class ResponseDTO {
     private String message;
     private String status;
     private Integer id;
-//    private User user;
+    private UserDTO userDetails;
     public ResponseDTO(String message) {
         this.message = message;
     }

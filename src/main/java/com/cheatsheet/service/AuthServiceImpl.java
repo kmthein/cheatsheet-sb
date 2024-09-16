@@ -3,6 +3,7 @@ package com.cheatsheet.service;
 import com.cheatsheet.dto.ResponseDTO;
 import com.cheatsheet.dto.ResponseTokenDTO;
 import com.cheatsheet.dto.UserDTO;
+import com.cheatsheet.entity.Image;
 import com.cheatsheet.entity.Role;
 import com.cheatsheet.entity.User;
 import com.cheatsheet.exception.ResourceNotFoundException;
@@ -67,6 +68,11 @@ public class AuthServiceImpl implements AuthService {
             ResponseTokenDTO tokenDTO = new ResponseTokenDTO();
             tokenDTO.setToken(token);
             UserDTO userDTO = mapper.map(existUser, UserDTO.class);
+            for(Image image: existUser.getUserImage()) {
+                if(!image.getIsDeleted()) {
+                    userDTO.setImgUrl(image.getImgUrl());
+                }
+            }
             tokenDTO.setUserDetails(userDTO);
             return tokenDTO;
         } catch (BadCredentialsException exception) {
